@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # script name: aks-flp-crud.sh
-# Version v0.0.1 20211108
+# Version v0.0.2 20211109
 # Set of tools to deploy AKS troubleshooting labs
 
 # "-l|--lab" Lab scenario to deploy
@@ -58,7 +58,7 @@ done
 # Variable definition
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPT_NAME="$(echo $0 | sed 's|\.\/||g')"
-SCRIPT_VERSION="Version v0.0.1 20211108"
+SCRIPT_VERSION="Version v0.0.2 20211109"
 
 # Funtion definition
 
@@ -110,7 +110,7 @@ function validate_cluster_exists () {
 # Usage text
 function print_usage_text () {
     NAME_EXEC="aks-flp-crud"
-    echo -e "$NAME_EXEC usage: $NAME_EXEC -l <LAB#> -u <USER_ALIAS>[-v|--validate] [-r|--region] [-h|--help] [--version]\n"
+    echo -e "$NAME_EXEC usage: $NAME_EXEC -l <LAB#> -u <USER_ALIAS> [-v|--validate] [-r|--region] [-h|--help] [--version]\n"
     echo -e "\nHere is the list of current labs available:\n
 *************************************************************************************
 *\t 1. AKS scale operation failed
@@ -133,7 +133,7 @@ function lab_scenario_1 () {
     --location $LOCATION \
     --node-count 3 \
     --node-vm-size Standard_DC2s_v2 \
-    --tag aks-net-lab=${LAB_SCENARIO} \
+    --tag aks-crud-lab=${LAB_SCENARIO} \
     --generate-ssh-keys \
     --yes \
     -o table
@@ -152,7 +152,7 @@ function lab_scenario_1 () {
 function lab_scenario_1_validation () {
     CLUSTER_NAME=aks-crud-ex${LAB_SCENARIO}-${USER_ALIAS}
     RESOURCE_GROUP=aks-crud-ex${LAB_SCENARIO}-rg-${USER_ALIAS}
-    LAB_TAG="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query tags -o yaml 2>/dev/null | grep aks-net-lab | cut -d ' ' -f2 | tr -d "'")"
+    LAB_TAG="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query tags -o yaml 2>/dev/null | grep aks-crud-lab | cut -d ' ' -f2 | tr -d "'")"
     echo -e "\n+++++++++++++++++++++++++++++++++++++++++++++++++++++"
     echo -e "--> Running validation for Lab scenario $LAB_SCENARIO\n"
     if [ -z $LAB_TAG ]
@@ -190,7 +190,7 @@ function lab_scenario_2 () {
     --location $LOCATION \
     --node-count 1 \
     --generate-ssh-keys \
-    --tag aks-net-lab=${LAB_SCENARIO} \
+    --tag aks-crud-lab=${LAB_SCENARIO} \
 	--yes \
     -o table
 
@@ -236,7 +236,7 @@ function lab_scenario_3 () {
     --location $LOCATION \
     --node-count 1 \
     --generate-ssh-keys \
-    --tag akslab=${LAB_SCENARIO} \
+    --tag aks-crud-lab=${LAB_SCENARIO} \
 	--yes \
     -o table
 
@@ -282,8 +282,6 @@ spec:
       app: mypod
 EOF
 
-    echo -e "\n\n--> Please wait while we are preparing the environment for you to troubleshoot...\n"
-    az aks get-credentials -g $RESOURCE_GROUP -n $CLUSTER_NAME --overwrite-existing &>/dev/null
     CLUSTER_URI="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query id -o tsv)"
     UPGRADE_VERSION="$(az aks get-upgrades -g $RESOURCE_GROUP -n $CLUSTER_NAME --output table | grep aks-crud-ex3-rg-seturren | awk '{print $4}' | tr -d ',')"
     az aks upgrade -g $RESOURCE_GROUP -n $CLUSTER_NAME --kubernetes-version $UPGRADE_VERSION --yes
@@ -296,7 +294,7 @@ function lab_scenario_3_validation () {
     CLUSTER_NAME=aks-crud-ex${LAB_SCENARIO}-${USER_ALIAS}
     RESOURCE_GROUP=aks-crud-ex${LAB_SCENARIO}-rg-${USER_ALIAS}
     
-    LAB_TAG="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query tags -o yaml 2>/dev/null | grep aks-net-lab | cut -d ' ' -f2 | tr -d "'")"
+    LAB_TAG="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query tags -o yaml 2>/dev/null | grep aks-crud-lab | cut -d ' ' -f2 | tr -d "'")"
     echo -e "\n+++++++++++++++++++++++++++++++++++++++++++++++++++"
     echo -e "--> Running validation for Lab scenario $LAB_SCENARIO\n"
     if [ -z $LAB_TAG ]
@@ -305,14 +303,11 @@ function lab_scenario_3_validation () {
         exit 6
     elif [ $LAB_TAG -eq $LAB_SCENARIO ]
     then
-        az aks get-credentials -g $RESOURCE_GROUP -n $CLUSTER_NAME --overwrite-existing &>/dev/null
-        CLUSTER_RESOURCE_GROUP=$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query nodeResourceGroup -o tsv)
-        PUBLIC_IP="$(kubectl get svc aks-helloworld-one | grep -v ^NAME | awk '{print $4}')"
-        SITE_STATUS="$(curl -IL -m 5 $PUBLIC_IP 2>/dev/null | grep ^HTTP | awk '{print $2}')"
-        if [ "$SITE_STATUS" == '200' ]
+        CLUSTER_STATUS="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query provisioningState -o tsv)"
+        if [ "$CLUSTER_STATUS" == 'Succeeded' ]
         then
             echo -e "\n\n========================================================"
-            echo -e "\nThe webservice looks good now\n"
+            echo -e "\nThe Cluster $CLUSTER_NAME looks good now\n"
         else
             echo -e "\nScenario $LAB_SCENARIO is still FAILED\n"
         fi

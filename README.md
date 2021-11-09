@@ -12,7 +12,7 @@ Run in docker: `docker run -it sturrent/aks-flp-crud:latest`
 aks-flp-crud tool usage:
 ```
 $ aks-flp-crud -h
-aks-flp-crud usage: aks-flp-crud -l <LAB#> -u <USER_ALIAS>[-v|--validate] [-r|--region] [-h|--help] [--version]
+aks-flp-crud usage: aks-flp-crud -l <LAB#> -u <USER_ALIAS> [-v|--validate] [-r|--region] [-h|--help] [--version]
 
 
 Here is the list of current labs available:
