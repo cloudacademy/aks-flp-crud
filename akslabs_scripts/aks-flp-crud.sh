@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # script name: aks-flp-crud.sh
-# Version v0.0.2 20211109
+# Version v0.0.3 20211109
 # Set of tools to deploy AKS troubleshooting labs
 
 # "-l|--lab" Lab scenario to deploy
@@ -58,7 +58,7 @@ done
 # Variable definition
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPT_NAME="$(echo $0 | sed 's|\.\/||g')"
-SCRIPT_VERSION="Version v0.0.2 20211109"
+SCRIPT_VERSION="Version v0.0.3 20211109"
 
 # Funtion definition
 
@@ -283,7 +283,7 @@ spec:
 EOF
 
     CLUSTER_URI="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query id -o tsv)"
-    UPGRADE_VERSION="$(az aks get-upgrades -g $RESOURCE_GROUP -n $CLUSTER_NAME --output table | grep aks-crud-ex3-rg-seturren | awk '{print $4}' | tr -d ',')"
+    UPGRADE_VERSION="$(az aks get-upgrades -g $RESOURCE_GROUP -n $CLUSTER_NAME --output table | grep $RESOURCE_GROUP | awk '{print $4}' | tr -d ',')"
     az aks upgrade -g $RESOURCE_GROUP -n $CLUSTER_NAME --kubernetes-version $UPGRADE_VERSION --yes
     echo -e "\n\n********************************************************"
     echo -e "\n--> Issue description: \nCluster upgrade failed\n"
