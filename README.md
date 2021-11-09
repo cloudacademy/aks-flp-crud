@@ -18,7 +18,7 @@ aks-flp-crud usage: aks-flp-crud -l <LAB#> -u <USER_ALIAS> [-v|--validate] [-r|-
 Here is the list of current labs available:
 
 *************************************************************************************
-*        1. AKS scale operation failed
+*        1. AKS scale failed
 *        2. AKS delete failed
 *        3. AKS upgrade failed
 *************************************************************************************

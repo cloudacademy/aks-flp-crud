@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # script name: aks-flp-crud.sh
-# Version v0.0.3 20211109
+# Version v0.0.4 20211109
 # Set of tools to deploy AKS troubleshooting labs
 
 # "-l|--lab" Lab scenario to deploy
@@ -58,7 +58,7 @@ done
 # Variable definition
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPT_NAME="$(echo $0 | sed 's|\.\/||g')"
-SCRIPT_VERSION="Version v0.0.3 20211109"
+SCRIPT_VERSION="Version v0.0.4 20211109"
 
 # Funtion definition
 
@@ -113,7 +113,7 @@ function print_usage_text () {
     echo -e "$NAME_EXEC usage: $NAME_EXEC -l <LAB#> -u <USER_ALIAS> [-v|--validate] [-r|--region] [-h|--help] [--version]\n"
     echo -e "\nHere is the list of current labs available:\n
 *************************************************************************************
-*\t 1. AKS scale operation failed
+*\t 1. AKS scale failed
 *\t 2. AKS delete failed
 *\t 3. AKS upgrade failed
 *************************************************************************************\n"
@@ -167,7 +167,7 @@ function lab_scenario_1_validation () {
         if [ "$NUMBER_OF_NODES" == "6" ]
         then
             echo -e "\n\n========================================================"
-            echo -e "\nThe cluster nodes outbound looks good now\n"
+            echo -e "\nThe cluster $CLUSTER_NAME scale action looks good now\n"
         else
             echo -e "\nScenario $LAB_SCENARIO is still FAILED\n"
         fi
