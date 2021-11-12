@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # script name: aks-flp-crud.sh
-# Version v0.0.4 20211109
+# Version v0.0.5 20211112
 # Set of tools to deploy AKS troubleshooting labs
 
 # "-l|--lab" Lab scenario to deploy
@@ -58,7 +58,7 @@ done
 # Variable definition
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPT_NAME="$(echo $0 | sed 's|\.\/||g')"
-SCRIPT_VERSION="Version v0.0.4 20211109"
+SCRIPT_VERSION="Version v0.0.5 20211112"
 
 # Funtion definition
 
@@ -142,9 +142,11 @@ function lab_scenario_1 () {
 
     echo -e "\n\n--> Please wait while we are preparing the environment for you to troubleshoot...\n"
     az aks get-credentials -g $RESOURCE_GROUP -n $CLUSTER_NAME --overwrite-existing &>/dev/null
-    az aks scale -g $RESOURCE_GROUP -n $CLUSTER_NAME --node-count 6 -o table
+    while true; do for s in / - \\ \|; do printf "\r$s"; sleep 1; done; done &
+    az aks scale -g $RESOURCE_GROUP -n $CLUSTER_NAME --node-count 6 &>/dev/null
+    kill $!; trap 'kill $!' SIGTERM
     CLUSTER_URI="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query id -o tsv)"
-    echo -e "\n************************************************************************\n"
+    echo -e "\n\n************************************************************************\n"
     echo -e "\n--> Issue description: \n AKS cluster scale operation failed\n"
     echo -e "Cluster uri == ${CLUSTER_URI}\n"
 }
@@ -284,7 +286,9 @@ EOF
 
     CLUSTER_URI="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query id -o tsv)"
     UPGRADE_VERSION="$(az aks get-upgrades -g $RESOURCE_GROUP -n $CLUSTER_NAME --output table | grep $RESOURCE_GROUP | awk '{print $4}' | tr -d ',')"
-    az aks upgrade -g $RESOURCE_GROUP -n $CLUSTER_NAME --kubernetes-version $UPGRADE_VERSION --yes
+    while true; do for s in / - \\ \|; do printf "\r$s"; sleep 1; done; done &
+    az aks upgrade -g $RESOURCE_GROUP -n $CLUSTER_NAME --kubernetes-version $UPGRADE_VERSION --yes &>/dev/null
+    kill $!; trap 'kill $!' SIGTERM
     echo -e "\n\n********************************************************"
     echo -e "\n--> Issue description: \nCluster upgrade failed\n"
     echo -e "\nCluster uri == ${CLUSTER_URI}\n"
