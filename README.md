@@ -12,11 +12,9 @@ Run in docker: `docker run -it sturrent/aks-flp-crud:latest`
 aks-flp-crud tool usage:
 ```
 $ aks-flp-crud -h
-aks-flp-crud usage: aks-flp-crud -l <LAB#> -u <USER_ALIAS> [-v|--validate] [-r|--region] [-h|--help] [--version]
-
+aks-flp-crud usage: aks-flp-crud -l <LAB#> -u <USER_ALIAS> [-v|--validate] [-r|--region] [-s|--sku] [-h|--help] [--version]
 
 Here is the list of current labs available:
-
 *************************************************************************************
 *        1. AKS scale failed
 *        2. AKS delete failed
@@ -24,7 +22,10 @@ Here is the list of current labs available:
 *************************************************************************************
 
 "-l|--lab" Lab scenario to deploy (3 possible options)
+"-u|--user" User alias to add on the lab name
 "-r|--region" region to create the resources
-"--version" print version of aks-flp-crud
+"-s|--sku" nodes SKU
+"-v|--validate" validate resolution
+"--version" print version of the tool
 "-h|--help" help info
 ```
