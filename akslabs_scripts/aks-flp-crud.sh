@@ -5,6 +5,7 @@
 # Set of tools to deploy AKS troubleshooting labs
 
 # "-l|--lab" Lab scenario to deploy
+# "-g|--resource-group" resource group to deploy the resources
 # "-r|--region" region to deploy the resources
 # "-s|--sku" nodes SKU
 # "-u|--user" User alias to add on the lab name
@@ -22,7 +23,7 @@ CLUSTER_NAME=""
 LAB_SCENARIO=""
 USER_ALIAS=""
 LOCATION="uksouth"
-SKU="Standard_DS2_v2"
+SKU="Standard_DC2s_v2"
 VALIDATE=0
 HELP=0
 VERSION=0
@@ -65,7 +66,7 @@ done
 # Variable definition
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPT_NAME="$(echo $0 | sed 's|\.\/||g')"
-SCRIPT_VERSION="Version v0.0.6 20220707"
+SCRIPT_VERSION="Version v0.0.7 20240315"
 
 # Funtion definition
 
@@ -137,7 +138,7 @@ function validate_cluster_exists () {
 # Usage text
 function print_usage_text () {
     NAME_EXEC="aks-flp-crud"
-    echo -e "$NAME_EXEC usage: $NAME_EXEC -l <LAB#> -u <USER_ALIAS> [-v|--validate] [-r|--region] [-s|--sku] [-h|--help] [--version]"
+    echo -e "$NAME_EXEC usage: $NAME_EXEC -l <LAB#> -u <USER_ALIAS> [-g|--resource-group] [-v|--validate] [-r|--region] [-s|--sku] [-h|--help] [--version]"
     echo -e "\nHere is the list of current labs available:
 *************************************************************************************
 *\t 1. AKS scale failed
@@ -145,6 +146,7 @@ function print_usage_text () {
 *\t 3. AKS upgrade failed
 *************************************************************************************\n"
 echo -e '"-l|--lab" Lab scenario to deploy (3 possible options)
+"-g|--resource-group" resource group to deploy the resources
 "-u|--user" User alias to add on the lab name
 "-r|--region" region to create the resources
 "-s|--sku" nodes SKU
@@ -156,11 +158,11 @@ echo -e '"-l|--lab" Lab scenario to deploy (3 possible options)
 # Lab scenario 1
 function lab_scenario_1 () {
     CLUSTER_NAME=aks-crud-ex${LAB_SCENARIO}-${USER_ALIAS}
-    RESOURCE_GROUP=aks-crud-ex${LAB_SCENARIO}-rg-${USER_ALIAS}
+    RESOURCE_GROUP=${RESOURCE_GROUP:-aks-crud-ex${LAB_SCENARIO}-rg-${USER_ALIAS}}
     SKU="Standard_DC2s_v2"
 
-    echo -e "\n--> Lab${LAB_SCENARIO} has a specific SKU requirement, validating if your sub has it...\n"
-    check_sku_availability "$SKU"
+    # echo -e "\n--> Lab${LAB_SCENARIO} has a specific SKU requirement, validating if your sub has it...\n"
+    # check_sku_availability "$SKU"
 
     check_resourcegroup_cluster $RESOURCE_GROUP $CLUSTER_NAME
 
@@ -192,7 +194,7 @@ function lab_scenario_1 () {
 
 function lab_scenario_1_validation () {
     CLUSTER_NAME=aks-crud-ex${LAB_SCENARIO}-${USER_ALIAS}
-    RESOURCE_GROUP=aks-crud-ex${LAB_SCENARIO}-rg-${USER_ALIAS}
+    RESOURCE_GROUP=${RESOURCE_GROUP:-aks-crud-ex${LAB_SCENARIO}-rg-${USER_ALIAS}}
     LAB_TAG="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query tags -o yaml 2>/dev/null | grep aks-crud-lab | cut -d ' ' -f2 | tr -d "'")"
     echo -e "\n+++++++++++++++++++++++++++++++++++++++++++++++++++++"
     echo -e "--> Running validation for Lab scenario $LAB_SCENARIO\n"
@@ -221,9 +223,9 @@ function lab_scenario_1_validation () {
 # Lab scenario 2
 function lab_scenario_2 () {
     CLUSTER_NAME=aks-crud-ex${LAB_SCENARIO}-${USER_ALIAS}
-    RESOURCE_GROUP=aks-crud-ex${LAB_SCENARIO}-rg-${USER_ALIAS}
+    RESOURCE_GROUP=${RESOURCE_GROUP:-aks-crud-ex${LAB_SCENARIO}-rg-${USER_ALIAS}}
     
-    check_sku_availability "$SKU"
+    # check_sku_availability "$SKU"
     check_resourcegroup_cluster $RESOURCE_GROUP $CLUSTER_NAME
 
     echo -e "\n--> Deploying cluster for lab${LAB_SCENARIO}...\n"
@@ -272,7 +274,7 @@ function lab_scenario_3 () {
     CLUSTER_NAME=aks-crud-ex${LAB_SCENARIO}-${USER_ALIAS}
     RESOURCE_GROUP=aks-crud-ex${LAB_SCENARIO}-rg-${USER_ALIAS}
     
-    check_sku_availability "$SKU"
+    # check_sku_availability "$SKU"
     check_resourcegroup_cluster $RESOURCE_GROUP $CLUSTER_NAME
     
     echo -e "\n--> Deploying cluster for lab${LAB_SCENARIO}...\n"
