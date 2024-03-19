@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # script name: aks-flp-crud.sh
-# Version v0.0.6 20220707
+# Version v0.0.7 20240315
 # Set of tools to deploy AKS troubleshooting labs
 
 # "-l|--lab" Lab scenario to deploy
