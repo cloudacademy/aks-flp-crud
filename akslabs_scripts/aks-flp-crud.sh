@@ -257,7 +257,7 @@ function lab_scenario_2 () {
 
 function lab_scenario_2_validation () {
     CLUSTER_NAME=aks-crud-ex${LAB_SCENARIO}-${USER_ALIAS}
-    RESOURCE_GROUP=aks-crud-ex${LAB_SCENARIO}-rg-${USER_ALIAS}
+    RESOURCE_GROUP=${RESOURCE_GROUP:-aks-crud-ex${LAB_SCENARIO}-rg-${USER_ALIAS}}
     echo -e "\n+++++++++++++++++++++++++++++++++++++++++++++++++++++"
     echo -e "--> Running validation for Lab scenario $LAB_SCENARIO\n"
     CLUSTER_EXIST=$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME &>/dev/null; echo $?)
@@ -272,7 +272,7 @@ function lab_scenario_2_validation () {
 # Lab scenario 3
 function lab_scenario_3 () {
     CLUSTER_NAME=aks-crud-ex${LAB_SCENARIO}-${USER_ALIAS}
-    RESOURCE_GROUP=aks-crud-ex${LAB_SCENARIO}-rg-${USER_ALIAS}
+    RESOURCE_GROUP=${RESOURCE_GROUP:-aks-crud-ex${LAB_SCENARIO}-rg-${USER_ALIAS}}
     
     # check_sku_availability "$SKU"
     check_resourcegroup_cluster $RESOURCE_GROUP $CLUSTER_NAME
@@ -343,7 +343,7 @@ EOF
 
 function lab_scenario_3_validation () {
     CLUSTER_NAME=aks-crud-ex${LAB_SCENARIO}-${USER_ALIAS}
-    RESOURCE_GROUP=aks-crud-ex${LAB_SCENARIO}-rg-${USER_ALIAS}
+    RESOURCE_GROUP=${RESOURCE_GROUP:-aks-crud-ex${LAB_SCENARIO}-rg-${USER_ALIAS}}
     
     LAB_TAG="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query tags -o yaml 2>/dev/null | grep aks-crud-lab | cut -d ' ' -f2 | tr -d "'")"
     echo -e "\n+++++++++++++++++++++++++++++++++++++++++++++++++++"
