@@ -247,7 +247,7 @@ function lab_scenario_2 () {
     CLUSTER_URI="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query id -o tsv)"
     VNET_NAME="$(az network vnet list -g $MC_RESOURCE_GROUP --query "[0].name" --output tsv)"
     SUBNET_URI="$(az network vnet subnet list -g $MC_RESOURCE_GROUP --vnet-name $VNET_NAME --query "[0].id" --output tsv)"
-    az network nic create --name test-nic -g $MC_RESOURCE_GROUP --subnet $SUBNET_URI -o none
+    az network nic create --name test-nic -g $RESOURCE_GROUP --subnet $SUBNET_URI --location $LOCATION -o none
     az aks delete -g $RESOURCE_GROUP -n $CLUSTER_NAME --yes --no-wait
 
     echo -e "\n\n********************************************************"
