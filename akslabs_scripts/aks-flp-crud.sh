@@ -320,7 +320,7 @@ spec:
             cpu: 250m
             memory: 256Mi
 ---
-apiVersion: policy/v1beta1
+apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: mypod-pdb
